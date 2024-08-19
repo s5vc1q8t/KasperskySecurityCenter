@@ -1,0 +1,40 @@
+---
+
+- name: KSCAdmin для KSC
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  tasks:
+  - name: Добавляем KSCAdmin
+    user:
+      name: KSCAdmin
+      password: "{{ 'Pa$$w0rd' | password_hash('sha512') }}"
+      shell: /bin/bash
+      createhome: no
+      groups: wheel
+      append: yes
+
+  - name: Убираем запрос пароля sudo
+    lineinfile:
+      path: "/etc/sudoers"
+      line: "KSCAdmin        ALL=(ALL)       NOPASSWD: ALL"
+      insertafter: '^# %wheel.*'
+      validate: /usr/sbin/visudo -cf %s
+
+  - name: Делаем пользователя системным
+    copy:
+      dest: "/var/lib/AccountsService/users/KSCAdmin"
+      content: |
+        [User]
+        Language=
+        XSession=
+        SystemAccount=true
+
+  - name: Устанавливаем недостающие пакеты
+    dnf:
+      name: perl-File-Copy
+      state: latest 
+
+...
