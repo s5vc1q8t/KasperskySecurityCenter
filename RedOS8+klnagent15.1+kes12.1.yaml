@@ -10,7 +10,7 @@
   - name: Добавляем KSCAdmin
     user:
       name: KSCAdmin
-      password: "{{ '6h#db@' | password_hash('sha512') }}"
+      password: "{{ 'Pa$$w0rd' | password_hash('sha512') }}"
       shell: /bin/bash
       createhome: no
       groups: wheel
